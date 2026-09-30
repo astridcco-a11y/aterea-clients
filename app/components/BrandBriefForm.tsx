@@ -7,51 +7,69 @@ interface BrandBriefFormProps {
   brandName: string
 }
 
-const questions = [
+interface FormField {
+  name: string
+  label: string
+  type: string
+  required: boolean
+}
+
+interface FormQuestion {
+  title: string
+  copy: string
+  fields?: FormField[]
+  textarea?: {
+    name: string
+    label: string
+    required: boolean
+  }
+}
+
+const questions: FormQuestion[] = [
   {
     title: 'Empecemos por lo básico.',
     copy: 'Cuéntanos cómo encontramos a tu marca.',
     fields: [
-      ['brandName', 'Nombre de marca', 'text', true],
-      ['instagram', 'Instagram', 'text', false],
-      ['website', 'Sitio web', 'url', false],
+      { name: 'brandName', label: 'Nombre de marca', type: 'text', required: true },
+      { name: 'instagram', label: 'Instagram', type: 'text', required: false },
+      { name: 'website', label: 'Sitio web', type: 'url', required: false },
     ],
   },
   {
     title: 'CUÉNTANOS\nQUÉ HACES.',
     copy: '¿Qué vende tu marca?',
-    textarea: ['whatYouSell', 'Describe lo que vendes, ofreces o haces.', true],
+    textarea: { name: 'whatYouSell', label: 'Describe lo que vendes, ofreces o haces.', required: true },
   },
   {
     title: 'QUÉ TE COMPRA?',
     copy: 'Descríbenos a la persona que más queremos entender.',
     fields: [
-      ['customerAge', 'Edad aproximada', 'text', false],
-      ['customerLocation', 'Ubicación', 'text', false],
-      ['customerInterests', 'Intereses', 'text', false],
-      ['customerSeeks', 'Qué busca', 'text', false],
-      ['customerWhy', 'Por qué compra', 'text', false],
+      { name: 'customerAge', label: 'Edad aproximada', type: 'text', required: false },
+      { name: 'customerLocation', label: 'Ubicación', type: 'text', required: false },
+      { name: 'customerInterests', label: 'Intereses', type: 'text', required: false },
+      { name: 'customerSeeks', label: 'Qué busca', type: 'text', required: false },
+      { name: 'customerWhy', label: 'Por qué compra', type: 'text', required: false },
     ],
   },
   {
     title: "¿QUÉ ESTÁ\nFUNCIONANDO?",
     copy: '¿Qué promociones funcionaron mejor? ¿Qué contenido tuvo mejores resultados?',
-    textarea: ['working', 'Cuéntanos qué ya tiene tracción.', false],
+    textarea: { name: 'working', label: 'Cuéntanos qué ya tiene tracción.', required: false },
   },
   {
     title: "Y QUÉ\nNO?",
     copy: 'Queremos saberlo para no repetirlo.',
-    textarea: ['notWorking', '¿Qué probaste y no funcionó?', false],
+    textarea: { name: 'notWorking', label: '¿Qué probaste y no funcionó?', required: false },
   },
   {
     title: 'IMAGINA QUE HAN PASADO\n90 DÍAS.',
     copy: 'Estamos revisando juntos los resultados y tú piensas: "Esto funcionó." ¿Qué tendría que haber sucedido?',
-    textarea: ['ninetyDays', 'Describe cómo se vería ese resultado.', true],
+    textarea: { name: 'ninetyDays', label: 'Describe cómo se vería ese resultado.', required: true },
   },
   {
     title: 'ONE LAST THING.',
     copy: 'Si pudieras pedirle UNA sola cosa a Aterea durante los próximos meses… ¿qué sería?',
-    textarea: ['oneThing', 'Tu respuesta.', true],
+    textarea: { name: 'oneThing', label: 'Tu respuesta.', required: true },
   },
 ]
 
@@ -142,17 +160,17 @@ export default function BrandBriefForm({ clientName, brandName }: BrandBriefForm
 
         {/* Form Fields */}
         <div className="space-y-4 mb-8">
-          {currentQuestion.fields?.map(([name, label, type, required]) => (
-            <div key={name}>
+          {currentQuestion.fields?.map((field) => (
+            <div key={field.name}>
               <label className="block text-sm font-semibold mb-2 uppercase tracking-wide">
-                {label} {required ? '*' : ''}
+                {field.label} {field.required ? '*' : ''}
               </label>
               <input
-                type={type}
-                name={name}
-                value={answers[name] || ''}
+                type={field.type}
+                name={field.name}
+                value={answers[field.name] || ''}
                 onChange={handleInputChange}
-                required={required}
+                required={field.required}
                 className="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-pink-600"
               />
             </div>
@@ -161,13 +179,13 @@ export default function BrandBriefForm({ clientName, brandName }: BrandBriefForm
           {currentQuestion.textarea && (
             <div>
               <label className="block text-sm font-semibold mb-2 uppercase tracking-wide">
-                {currentQuestion.textarea[1]} {currentQuestion.textarea[2] ? '*' : ''}
+                {currentQuestion.textarea.label} {currentQuestion.textarea.required ? '*' : ''}
               </label>
               <textarea
-                name={currentQuestion.textarea[0]}
-                value={answers[currentQuestion.textarea[0]] || ''}
+                name={currentQuestion.textarea.name}
+                value={answers[currentQuestion.textarea.name] || ''}
                 onChange={handleInputChange}
-                required={currentQuestion.textarea[2]}
+                required={currentQuestion.textarea.required}
                 className="w-full border-b border-gray-300 py-2 focus:outline-none focus:border-pink-600 min-h-32"
               />
             </div>
