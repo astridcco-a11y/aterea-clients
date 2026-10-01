@@ -40,12 +40,13 @@ export default function AdminDashboard() {
 
   const loadClients = async () => {
     try {
-      const q = query(collection(db, 'clients'), orderBy('created_at', 'desc'))
-      const querySnapshot = await getDocs(q)
-      const clientsList = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Client[]
+      const querySnapshot = await getDocs(collection(db, 'clients'))
+      const clientsList = querySnapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) as Client[]
       setClients(clientsList)
     } catch (err) {
       console.error('Error loading clients:', err)
