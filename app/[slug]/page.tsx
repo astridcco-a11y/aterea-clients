@@ -49,6 +49,25 @@ export default function ClientPage({ params }: { params: Promise<{ slug: string 
             .join('')
         }
 
+        // Agregar timeline stages
+        const processGrid = document.getElementById('process-grid')
+        if (processGrid) {
+          const existingFill = processGrid.querySelector('.process-fill')
+          processGrid.innerHTML = ''
+          if (existingFill) processGrid.appendChild(existingFill)
+
+          const stages = ['DISCOVERY', 'STRATEGY', 'CREATION', 'REVIEW', 'LAUNCH', 'OPTIMIZE']
+          stages.forEach((stage, index) => {
+            const stageEl = document.createElement('article')
+            stageEl.className = 'stage-item'
+            stageEl.innerHTML = `
+              <span class="stage-index micro">${String(index + 1).padStart(2, '0')}</span>
+              <h3 class="stage-name">${stage}</h3>
+            `
+            processGrid.appendChild(stageEl)
+          })
+        }
+
         // Ejecutar evento para abrir invitación (opcional)
         const envelopeTrigger = document.getElementById('envelope-trigger')
         if (envelopeTrigger) {
