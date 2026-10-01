@@ -66,12 +66,10 @@ export default function AdminDashboard() {
     }
 
     try {
-      console.log('Creating client:', formData)
-      const docRef = await addDoc(collection(db, 'clients'), {
+      await addDoc(collection(db, 'clients'), {
         ...formData,
         created_at: new Date().toISOString(),
       })
-      console.log('Client created:', docRef.id)
 
       setSuccess('Cliente creado exitosamente')
       setFormData({
@@ -81,11 +79,8 @@ export default function AdminDashboard() {
         package_name: '',
       })
       setShowForm(false)
-
-      // Reload after a short delay
-      setTimeout(() => loadClients(), 500)
+      loadClients()
     } catch (err: any) {
-      console.error('Firebase error:', err)
       setError(err.message || 'Error al crear cliente')
     }
   }
