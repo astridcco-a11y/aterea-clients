@@ -1,6 +1,7 @@
 'use client'
 
-import { supabase } from '../lib/supabase'
+import { db } from '../lib/firebase'
+import { collection, query, where, getDocs } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import BrandBriefForm from '../components/BrandBriefForm'
 
@@ -23,14 +24,17 @@ export default function ClientPage({ params }: { params: Promise<{ slug: string 
       const { slug: resolvedSlug } = await params
       setSlug(resolvedSlug)
 
-      const { data } = await supabase
-        .from('clients')
-        .select('*')
-        .eq('slug', resolvedSlug)
-        .single()
-
-      setClient(data)
-      setLoading(false)
+      try {
+        const q = query(collection(db, 'clients'), where('slug', '==', resolvedSlug))
+        const querySnapshot = await getDocs(q)
+        if (!querySnapshot.empty) {
+          setClient(querySnapshot.docs[0].data() as Client)
+        }
+      } catch (err) {
+        console.error('Error loading client:', err)
+      } finally {
+        setLoading(false)
+      }
     }
 
     loadClient()

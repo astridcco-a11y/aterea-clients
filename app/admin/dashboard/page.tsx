@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/app/lib/supabase'
+import { db } from '@/app/lib/firebase'
+import { collection, getDocs, addDoc, query, orderBy } from 'firebase/firestore'
 
 interface Client {
   id: string
@@ -39,14 +40,13 @@ export default function AdminDashboard() {
 
   const loadClients = async () => {
     try {
-      const { data } = await supabase
-        .from('clients')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (data) {
-        setClients(data)
-      }
+      const q = query(collection(db, 'clients'), orderBy('created_at', 'desc'))
+      const querySnapshot = await getDocs(q)
+      const clientsList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Client[]
+      setClients(clientsList)
     } catch (err) {
       console.error('Error loading clients:', err)
     } finally {
@@ -65,11 +65,10 @@ export default function AdminDashboard() {
     }
 
     try {
-      const { error: insertError } = await supabase
-        .from('clients')
-        .insert([formData])
-
-      if (insertError) throw insertError
+      await addDoc(collection(db, 'clients'), {
+        ...formData,
+        created_at: new Date().toISOString(),
+      })
 
       setSuccess('Cliente creado exitosamente')
       setFormData({
