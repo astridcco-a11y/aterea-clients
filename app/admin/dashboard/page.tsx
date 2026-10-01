@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { db } from '@/app/lib/firebase'
-import { collection, getDocs, addDoc, query, orderBy } from 'firebase/firestore'
+import { collection, getDocs, addDoc } from 'firebase/firestore'
 
 interface Client {
   id: string
